@@ -57,6 +57,34 @@ def leerArchivo():
         print("Error, el archivo no se encuentra en la carpeta o no se especifico su formato '.txt': Ex: 'input.txt'")
     return clausulas, bitStream
 
+<<<<<<< HEAD
+=======
+
+def clausulasSatisfechas(bitStream, clausulas):
+    #Diccionario con los bits ya traducidos
+    clausulas2={}
+
+    #Traduce los indices por bits
+    for x in range(0, len(clausulas)):#Por cada clausula
+        for y in range(0,3):# Porque solo hay 3 variables por clausula
+            if clausulas2.get(x)==None:
+                clausulas2[x]=[]
+            valor=clausulas[x][y]
+            bit=bitStream[abs(valor)-1]
+            #print('valor '+str(valor)+', bit '+str(bit)+', en llave ' +str(x))
+            if(valor<0):
+                if(bit==0):
+                    clausulas2[x].append(1)
+                if(bit==1):
+                    clausulas2[x].append(0)
+            else:
+                clausulas2[x].append(bit)
+    return clausulas2
+
+
+#Evalua un bitstream junto con las clausulas
+def sat(bitStream, clausulas):
+>>>>>>> 5c465916263564d3e90df1235bf267c1c31b4ab2
 
 #Regresa todas las clausulas con sus bits
 def clausulasSatisfechas(bitStream, clausulas):
@@ -78,7 +106,11 @@ def clausulasSatisfechas(bitStream, clausulas):
                     clausulas2[x].append(0)
             else:
                 clausulas2[x].append(bit)
+<<<<<<< HEAD
     return clausulas2
+=======
+   # print(clausulas2)
+>>>>>>> 5c465916263564d3e90df1235bf267c1c31b4ab2
 
 def filtrarClausulas(clausulas):
     clasulasSatisfechas={}
@@ -108,8 +140,9 @@ def main():
     #uf20-03.txt
     
     clausulas,bitStream=leerArchivo()
-    print(clausulas)
+
     print(bitStream)
+<<<<<<< HEAD
     
 
     for i in range(0,20*3):
@@ -133,5 +166,8 @@ def main():
 
         print(bitStream)
 
+=======
+>>>>>>> 5c465916263564d3e90df1235bf267c1c31b4ab2
 
+    print(clausulasSatisfechas(bitStream, clausulas))
 main()
