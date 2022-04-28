@@ -57,6 +57,30 @@ def leerArchivo():
         print("Error, el archivo no se encuentra en la carpeta o no se especifico su formato '.txt': Ex: 'input.txt'")
     return clausulas, bitStream
 
+
+def clausulasSatisfechas(bitStream, clausulas):
+    #Diccionario con los bits ya traducidos
+    clausulas2={}
+
+    #Traduce los indices por bits
+    for x in range(0, len(clausulas)):#Por cada clausula
+        for y in range(0,3):# Porque solo hay 3 variables por clausula
+            if clausulas2.get(x)==None:
+                clausulas2[x]=[]
+            valor=clausulas[x][y]
+            bit=bitStream[abs(valor)-1]
+            #print('valor '+str(valor)+', bit '+str(bit)+', en llave ' +str(x))
+            if(valor<0):
+                if(bit==0):
+                    clausulas2[x].append(1)
+                if(bit==1):
+                    clausulas2[x].append(0)
+            else:
+                clausulas2[x].append(bit)
+    return clausulas2
+
+
+#Evalua un bitstream junto con las clausulas
 def sat(bitStream, clausulas):
 
     #Diccionario con los bits ya traducidos
@@ -77,7 +101,7 @@ def sat(bitStream, clausulas):
                     clausulas2[x].append(0)
             else:
                 clausulas2[x].append(bit)
-    #print(clausulas2)
+   # print(clausulas2)
 
     #Se aplica un OR dentro de cada clausula, despues e agrega a un arreglo
     kSat=[]
@@ -95,10 +119,8 @@ def main():
     #uf20-02.txt
     #uf20-03.txt
     clausulas,bitStream=leerArchivo()
-    print(clausulas)
+
     print(bitStream)
-    print(sat(bitStream, clausulas))
 
-
-
+    print(clausulasSatisfechas(bitStream, clausulas))
 main()
