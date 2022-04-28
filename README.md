@@ -1,0 +1,2 @@
+# ProyectoMetodosCuantitativos
+K-SAT
