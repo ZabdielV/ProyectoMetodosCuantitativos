@@ -9,9 +9,9 @@ Zabdiel Valentin Garduño Vivanco A01377950
 
 # Leer de un archivo txt y guardar en un diccionario las clausulas.
 def leerArchivo():
-    bitStream = []
-    clausulas = {}
-    Arreglo = []
+    bitStream = [] # 20 Variables generate randomly
+    clausulas = {} # Dictionary of clauses 91 clasulas
+    Arreglo = [] #cada linea del txt
     try:
         print(
             "Bienvenido, introduce el nombre del archivo con su formato .txt ,\n asegúrate de que el archivo se encuentre en el mismo directorio.\n Ejemplo: input.txt\n")
@@ -57,8 +57,9 @@ def leerArchivo():
         print("Error, el archivo no se encuentra en la carpeta o no se especifico su formato '.txt': Ex: 'input.txt'")
     return clausulas, bitStream
 
-def sat(bitStream, clausulas):
 
+#Regresa todas las clausulas con sus bits
+def clausulasSatisfechas(bitStream, clausulas):
     #Diccionario con los bits ya traducidos
     clausulas2={}
 
@@ -77,28 +78,60 @@ def sat(bitStream, clausulas):
                     clausulas2[x].append(0)
             else:
                 clausulas2[x].append(bit)
-    #print(clausulas2)
+    return clausulas2
 
-    #Se aplica un OR dentro de cada clausula, despues e agrega a un arreglo
-    kSat=[]
-    for x in range(0,len(clausulas2)):
-        kSat.append(any(clausulas2[x]))
-    #print(kSat)
+def filtrarClausulas(clausulas):
+    clasulasSatisfechas={}
+    clasulasNoSatisfechas={}
+    for clave in clausulas:
+        valor = clausulas[clave]
+        if(any(valor)):# any([1,0,0]) == true
+            clasulasSatisfechas[clave] = valor 
+        else:# any([0,0,0]) == false
+            clasulasNoSatisfechas[clave] = valor 
+    #print(clasulasSatisfechas)
+    print("----------------------")
+    print(clasulasNoSatisfechas)
 
-    #Se le aplica un AND a todas las clausulas
-    if(all(kSat)==True):
-        return 1
-    return 0
+    return clasulasSatisfechas,clasulasNoSatisfechas
+
+def escogerClausulaNoSatisfecha(clausulasNoSatisfecha):
+    llaveRandom=random.choice(list(clausulasNoSatisfecha))
+    print("Clausula a cambiar: ", llaveRandom, ", Valor:", clausulasNoSatisfecha[llaveRandom])
+    indiceDeVariable=random.randint(0,2)
+    #print(indiceDeVariable)
+    return llaveRandom,indiceDeVariable
 
 def main():
     #uf20-01.txt
     #uf20-02.txt
     #uf20-03.txt
+    
     clausulas,bitStream=leerArchivo()
     print(clausulas)
     print(bitStream)
-    print(sat(bitStream, clausulas))
+    
 
+    for i in range(0,20*3):
+        print(i+1)
+        diccionarioDeClausulas = clausulasSatisfechas(bitStream, clausulas)
+        clausulasSatisfehcas, clausulasNoSatisechas = filtrarClausulas(diccionarioDeClausulas)
+        if(len(clausulasNoSatisechas) == 0):
+            print("¡Caso resuelto!")
+            print(bitStream)
+            break
+        llaveRandom,indiceDeVariable = escogerClausulaNoSatisfecha(clausulasNoSatisechas)
+        print("Llave: ", llaveRandom, ", indice a cambiar: ", indiceDeVariable)
+        #Modificar variables originales
+        bitStreamACambiar = abs(clausulas[llaveRandom][indiceDeVariable])
+        print("Bit obtenido de la clausula: ",bitStreamACambiar)
+        print(bitStream)
+        if(bitStream[bitStreamACambiar-1] == 1):
+            bitStream[bitStreamACambiar-1] = 0
+        else:
+            bitStream[bitStreamACambiar-1] = 1
+
+        print(bitStream)
 
 
 main()
