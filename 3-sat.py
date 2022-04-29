@@ -90,17 +90,22 @@ def filtrarClausulas(clausulas):
         else:# any([0,0,0]) == false
             clasulasNoSatisfechas[clave] = valor 
     #print(clasulasSatisfechas)
-    print("----------------------")
-    print(clasulasNoSatisfechas)
+    #print("----------------------")
+    #print(clasulasNoSatisfechas)
 
     return clasulasSatisfechas,clasulasNoSatisfechas
 
 def escogerClausulaNoSatisfecha(clausulasNoSatisfecha):
     llaveRandom=random.choice(list(clausulasNoSatisfecha))
-    print("Clausula a cambiar: ", llaveRandom, ", Valor:", clausulasNoSatisfecha[llaveRandom])
+    #print("Clausula a cambiar: ", llaveRandom, ", Valor:", clausulasNoSatisfecha[llaveRandom])
     indiceDeVariable=random.randint(0,2)
     #print(indiceDeVariable)
     return llaveRandom,indiceDeVariable
+
+def imprimirClausulas(clausulas, f):
+    for llave in clausulas:
+        valor = clausulas[llave]
+        f.write(str(llave) + ': ' + str(valor) + '\n')
 
 def main():
     #uf20-01.txt
@@ -108,30 +113,46 @@ def main():
     #uf20-03.txt
     
     clausulas,bitStream=leerArchivo()
-    print(clausulas)
-    print(bitStream)
+    f = open('pruebas.txt', 'r+')
     
+    f.write('Clausulas Generadas: \n')
+    imprimirClausulas(clausulas, f)
+
+    f.write('Bit Stream Generado: ')
+    f.write(str(bitStream) + '\n')
+
 
     for i in range(0,20*3):
-        print(i+1)
+        f.write('Intento numero: [ ' + str(i + 1) + ' ]' + '\n')
         diccionarioDeClausulas = clausulasSatisfechas(bitStream, clausulas)
-        clausulasSatisfehcas, clausulasNoSatisechas = filtrarClausulas(diccionarioDeClausulas)
+        f.write("------------------\n")
+        clausulasCumplidas, clausulasNoSatisechas = filtrarClausulas(diccionarioDeClausulas)
+        f.write('Clausulas satisfechas: \n')
+        imprimirClausulas(clausulasCumplidas, f)
+        f.write('Clausulas no satisfechas: \n')
+        imprimirClausulas(clausulasNoSatisechas, f)
+        if i == 10:
+            clausulasNoSatisechas = {}
         if(len(clausulasNoSatisechas) == 0):
-            print("¡Caso resuelto!")
-            print(bitStream)
+            f.write('¡Caso resuelto!\n')
+            f.write('Bit Stream Final: ' + str(bitStream) + '\n')
             break
         llaveRandom,indiceDeVariable = escogerClausulaNoSatisfecha(clausulasNoSatisechas)
-        print("Llave: ", llaveRandom, ", indice a cambiar: ", indiceDeVariable)
+        f.write('Clausula random a cambiar :  ' + str(llaveRandom) + '. Elemento a cambiar: ' + str(indiceDeVariable + 1) + '\n')
         #Modificar variables originales
         bitStreamACambiar = abs(clausulas[llaveRandom][indiceDeVariable])
-        print("Bit obtenido de la clausula: ",bitStreamACambiar)
-        print(bitStream)
+        f.write('Bit Stream a Cambiar: ' + str(bitStreamACambiar) + ' \t\n')
+        f.write('Bit Stream antes de cambio: ' + str(bitStream) + '\t\n')
         if(bitStream[bitStreamACambiar-1] == 1):
             bitStream[bitStreamACambiar-1] = 0
         else:
             bitStream[bitStreamACambiar-1] = 1
 
-        print(bitStream)
+        f.write('Bit Stream Modificado:      '  + str(bitStream) + '\n')
+    
+    f.close()
+
+    
 
 
 main()
