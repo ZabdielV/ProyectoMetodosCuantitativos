@@ -1,5 +1,8 @@
 
 import random
+import plotly.express as px
+import pandas as pd
+
 """
 Emiliano Javier Gómez Jiménez A01377235
 Luis Jonathan Rosas Ramos A01377942
@@ -111,8 +114,14 @@ def main():
     #uf20-01.txt
     #uf20-02.txt
     #uf20-03.txt
-    
+    n=20
+    clausulaNoSatisfechaPorIteracion=[]
+
+
     clausulas,bitStream=leerArchivo()
+    #Borra el contenido de la anterior ejecucion
+    open('pruebas.txt', 'w').close()
+
     f = open('pruebas.txt', 'r+')
     
     f.write('Clausulas Generadas: \n')
@@ -122,7 +131,7 @@ def main():
     f.write(str(bitStream) + '\n')
 
 
-    for i in range(0,20*3):
+    for i in range(0,n*3):
         f.write('Intento numero: [ ' + str(i + 1) + ' ]' + '\n')
         diccionarioDeClausulas = clausulasSatisfechas(bitStream, clausulas)
         f.write("------------------\n")
@@ -131,13 +140,14 @@ def main():
         imprimirClausulas(clausulasCumplidas, f)
         f.write('Clausulas no satisfechas: \n')
         imprimirClausulas(clausulasNoSatisechas, f)
-        if i == 10:
-            clausulasNoSatisechas = {}
+
         if(len(clausulasNoSatisechas) == 0):
             f.write('¡Caso resuelto!\n')
             f.write('Bit Stream Final: ' + str(bitStream) + '\n')
             break
+
         llaveRandom,indiceDeVariable = escogerClausulaNoSatisfecha(clausulasNoSatisechas)
+        clausulaNoSatisfechaPorIteracion.append(llaveRandom)
         f.write('Clausula random a cambiar :  ' + str(llaveRandom) + '. Elemento a cambiar: ' + str(indiceDeVariable + 1) + '\n')
         #Modificar variables originales
         bitStreamACambiar = abs(clausulas[llaveRandom][indiceDeVariable])
@@ -149,7 +159,14 @@ def main():
             bitStream[bitStreamACambiar-1] = 1
 
         f.write('Bit Stream Modificado:      '  + str(bitStream) + '\n')
-    
+
+    df = pd.DataFrame(dict(
+        clausulas=clausulaNoSatisfechaPorIteracion,
+        y=[1]*len(clausulaNoSatisfechaPorIteracion)
+    ))
+
+    fig = px.scatter(df, x='clausulas', y="y", title="Saltos entre clausulas no satisfechas")
+    fig.show()
     f.close()
 
     
