@@ -17,7 +17,7 @@ def leerArchivo():
     Arreglo = [] #cada linea del txt
     try:
         print(
-            "Bienvenido, introduce el nombre del archivo con su formato .txt ,\n asegúrate de que el archivo se encuentre en el mismo directorio.\n Ejemplo: input.txt\n")
+            "Bienvenido, introduce el nombre del archivo con su formato .txt ,\n asegúrate de que el archivo se encuentre en el mismo directorio.\n Ejemplo: uf20-01.txt\n")
         fileh = input("Nombre del archivo: ")
         archivo = open(fileh, "r")
         lineas = archivo.readlines()
@@ -115,10 +115,12 @@ def main():
     #uf20-02.txt
     #uf20-03.txt
     n=20
-    clausulaNoSatisfechaPorIteracion=[]
+    ejeX=[]
+    ejeY=[]
 
 
     clausulas,bitStream=leerArchivo()
+
     #Borra el contenido de la anterior ejecucion
     open('pruebas.txt', 'w').close()
 
@@ -136,6 +138,11 @@ def main():
         diccionarioDeClausulas = clausulasSatisfechas(bitStream, clausulas)
         f.write("------------------\n")
         clausulasCumplidas, clausulasNoSatisechas = filtrarClausulas(diccionarioDeClausulas)
+
+        #Agrear las clausulas no satisfechas por iteracion
+        ejeX.append(i+1)
+        ejeY.append(len(clausulasNoSatisechas))
+
         f.write('Clausulas satisfechas: \n')
         imprimirClausulas(clausulasCumplidas, f)
         f.write('Clausulas no satisfechas: \n')
@@ -147,7 +154,7 @@ def main():
             break
 
         llaveRandom,indiceDeVariable = escogerClausulaNoSatisfecha(clausulasNoSatisechas)
-        clausulaNoSatisfechaPorIteracion.append(llaveRandom)
+
         f.write('Clausula random a cambiar :  ' + str(llaveRandom) + '. Elemento a cambiar: ' + str(indiceDeVariable + 1) + '\n')
         #Modificar variables originales
         bitStreamACambiar = abs(clausulas[llaveRandom][indiceDeVariable])
@@ -159,17 +166,15 @@ def main():
             bitStream[bitStreamACambiar-1] = 1
 
         f.write('Bit Stream Modificado:      '  + str(bitStream) + '\n')
-
     df = pd.DataFrame(dict(
-        clausulas=clausulaNoSatisfechaPorIteracion,
-        y=[1]*len(clausulaNoSatisfechaPorIteracion)
+        iteracion=ejeX,
+        clausulasNoSatisfechas=ejeY
     ))
 
-    fig = px.scatter(df, x='clausulas', y="y", title="Saltos entre clausulas no satisfechas")
+    fig = px.line(df, x='iteracion', y="clausulasNoSatisfechas", title="Clausulas no satisfechas en iteraciones")
     fig.show()
     f.close()
 
-    
 
 
 main()
